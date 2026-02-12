@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#16233A"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:strokeColor="#2B3F66"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/vacationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Summer Hawaii"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/vacationPrice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/vacationPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$1,200"
+            android:textColor="#7CBAFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/hotelName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Hilton Resort"
+            android:textColor="#B7C3DD"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/vacationTitle" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#2B3F66"
+            app:layout_constraintTop_toBottomOf="@id/hotelName" />
+
+        <TextView
+            android:id="@+id/startDateValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Feb 10, 2026"
+            android:textColor="#8FA3C7"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" → "
+            android:textColor="#8FA3C7"
+            app:layout_constraintBottom_toBottomOf="@id/startDateValue"
+            app:layout_constraintStart_toEndOf="@id/startDateValue"
+            app:layout_constraintTop_toTopOf="@id/startDateValue" />
+
+        <TextView
+            android:id="@+id/endDateValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Feb 20, 2026"
+            android:textColor="#8FA3C7"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/startDateValue"
+            app:layout_constraintStart_toEndOf="@id/startDateValue"
+            android:layout_marginStart="20dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

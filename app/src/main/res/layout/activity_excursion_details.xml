@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B1220">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Excursion Details"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
+
+        <EditText
+            android:id="@+id/excursionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Excursion Name"
+            android:paddingStart="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#5B6B8B"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/excursionPrice"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Price"
+            android:inputType="numberDecimal"
+            android:paddingStart="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#5B6B8B"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/excursiondate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Date"
+            android:focusable="false"
+            android:paddingStart="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#5B6B8B"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="16dp"/>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/excursionnote"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:hint="Notes..."
+            android:gravity="top"
+            android:padding="16dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#5B6B8B"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginBottom="24dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveExcursionButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Save Excursion"
+            android:textColor="#0B1220"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="#7CBAFF"
+            app:cornerRadius="20dp" />
+
+    </LinearLayout>
+</ScrollView>

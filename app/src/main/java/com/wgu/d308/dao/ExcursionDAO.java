@@ -23,13 +23,13 @@ public interface ExcursionDAO {
     @Delete
     void delete(Excursion excursion);
 
-    @Query("SELECT * FROM excursion_table ORDER BY id ASC")
+    @Query("SELECT * FROM excursions ORDER BY excursionID ASC")
     List<Excursion> getAllExcursions();
 
-    @Query("SELECT * FROM excursion_table WHERE vacationID=:prod ORDER BY id ASC")
+    @Query("SELECT * FROM excursions WHERE vacationID=:prod ORDER BY excursionID ASC")
     List<Excursion> getAssociatedExcursions(int prod);
 
-    @Query("SELECT * FROM excursion_table WHERE id = :excursionId LIMIT 1")
+    @Query("SELECT * FROM excursions WHERE excursionID = :excursionId LIMIT 1")
     Excursion getExcursionById(int excursionId);
 
 }

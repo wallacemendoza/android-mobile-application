@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0B1220"
+    android:padding="16dp"
+    tools:context=".UI.VacationDetails">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/detailsCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#111B2E"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="10dp"
+        app:cardUseCompatPadding="true"
+        app:strokeColor="#1E2A44"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <EditText
+                android:id="@+id/titletext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Vacation Name"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B7C3DD"
+                android:backgroundTint="#1E2A44"/>
+
+            <EditText
+                android:id="@+id/hoteltext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Hotel Name"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B7C3DD"
+                android:backgroundTint="#1E2A44"/>
+
+            <TextView
+                android:id="@+id/startvacationdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Start Date"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="12dp"
+                android:background="@drawable/date_picker_background"/>
+
+            <TextView
+                android:id="@+id/endvacationdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="End Date"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="12dp"
+                android:background="@drawable/date_picker_background"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/excursionrecyclerview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/detailsCard"
+        app:layout_constraintBottom_toTopOf="@+id/addExcursionButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addExcursionButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="Add Excursion"
+        android:textAllCaps="false"
+        android:textColor="#0B1220"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#7CBAFF"
+        app:cornerRadius="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/addVacationButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addVacationButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Add Vacation to List"
+        android:textAllCaps="false"
+        android:textColor="#0B1220"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:backgroundTint="#7CBAFF"
+        app:cornerRadius="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
