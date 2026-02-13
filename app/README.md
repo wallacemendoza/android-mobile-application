@@ -41,23 +41,24 @@ working_branch
 ### Vacation Details Screen
 Users can:
 - Enter or edit vacation title.
+- Enter or edit vacation price.
 - Enter hotel or accommodation name.
 - Enter start and end dates.
 - Save changes to update the database.
-- Delete the vacation (only if no excursions are associated).
+- Delete the vacation.
 - Set alerts for vacation start and end dates.
 - Share vacation details using the built-in Android sharing feature.
 - View a list of associated excursions.
 - Add new excursions.
 
 Validation includes:
-- End date must be after start date.
-- Vacation cannot be deleted if excursions exist.
+- End date and time must be after start  and time.
 
 ### Excursion Details Screen
 Users can:
 - Enter or edit excursion title.
-- Enter excursion date.
+- Enter or edit excursion price.
+- Enter excursion date and time.
 - Save changes to update the database.
 - Delete excursion.
 - Set an alert for the excursion date.
