@@ -47,6 +47,17 @@
                 android:textColorHint="#B7C3DD"
                 android:backgroundTint="#1E2A44"/>
 
+            <EditText
+                android:id="@+id/pricetext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Price"
+                android:inputType="numberDecimal"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B7C3DD"
+                android:backgroundTint="#1E2A44"/>
+
             <TextView
                 android:id="@+id/startvacationdate"
                 android:layout_width="match_parent"
@@ -93,9 +104,22 @@
         android:textStyle="bold"
         app:backgroundTint="#7CBAFF"
         app:cornerRadius="18dp"
-        app:layout_constraintBottom_toTopOf="@+id/addVacationButton"
+        app:layout_constraintBottom_toTopOf="@+id/deleteVacationButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/deleteVacationButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Delete Vacation"
+        android:textColor="#FF8A80"
+        app:strokeColor="#FF8A80"
+        app:cornerRadius="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/addVacationButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addVacationButton"

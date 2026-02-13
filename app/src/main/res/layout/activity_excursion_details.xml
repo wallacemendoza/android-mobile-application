@@ -55,13 +55,6 @@
             android:background="@drawable/edit_text_background"
             android:layout_marginBottom="16dp"/>
 
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/edit_text_background"
-            android:layout_marginBottom="16dp"/>
-
         <EditText
             android:id="@+id/excursionnote"
             android:layout_width="match_parent"
@@ -83,6 +76,17 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:backgroundTint="#7CBAFF"
+            app:cornerRadius="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/deleteExcursionButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Delete Excursion"
+            android:textColor="#FF8A80"
+            app:strokeColor="#FF8A80"
             app:cornerRadius="20dp" />
 
     </LinearLayout>
