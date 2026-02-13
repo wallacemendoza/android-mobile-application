@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import java.util.Locale;
 
 public class VacationDetails extends AppCompatActivity {
     String name;
+    double price;
     static int notificationID;
     String hotel;
     int vacationID;
@@ -40,12 +42,12 @@ public class VacationDetails extends AppCompatActivity {
     String endVacationDate;
     EditText editName;
     EditText editHotel;
+    EditText editPrice;
     TextView editStartVacaDate;
     TextView editEndVacaDate;
     Vacation currentVacation;
-    int numExcursions;
-    DatePickerDialog.OnDateSetListener startVacaDate;
-    DatePickerDialog.OnDateSetListener endVacaDate;
+    DatePickerDialog.OnDateSetListener startVacaDateListener;
+    DatePickerDialog.OnDateSetListener endVacaDateListener;
     final Calendar myCalendarStart = Calendar.getInstance();
     final Calendar myCalendarEnd = Calendar.getInstance();
     Repository repository;
@@ -59,40 +61,43 @@ public class VacationDetails extends AppCompatActivity {
 
         editName = findViewById(R.id.titletext);
         editHotel = findViewById(R.id.hoteltext);
+        editPrice = findViewById(R.id.pricetext);
         editStartVacaDate = findViewById(R.id.startvacationdate);
         editEndVacaDate = findViewById(R.id.endvacationdate);
 
         vacationID = getIntent().getIntExtra("id", -1);
         name = getIntent().getStringExtra("name");
+        price = getIntent().getDoubleExtra("price", 0.0);
         hotel = getIntent().getStringExtra("hotel");
         startVacationDate = getIntent().getStringExtra("startVacationDate");
         endVacationDate = getIntent().getStringExtra("endVacationDate");
 
         editName.setText(name);
         editHotel.setText(hotel);
+        editPrice.setText(String.valueOf(price));
         editStartVacaDate.setText(startVacationDate);
         editEndVacaDate.setText(endVacationDate);
 
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "MM/dd/yy HH:mm";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        startVacaDate = (view, year, monthOfYear, dayOfMonth) -> {
+        startVacaDateListener = (view, year, monthOfYear, dayOfMonth) -> {
             myCalendarStart.set(Calendar.YEAR, year);
             myCalendarStart.set(Calendar.MONTH, monthOfYear);
             myCalendarStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabelStart();
+            showStartTimePickerDialog();
         };
 
-        endVacaDate = (view, year, monthOfYear, dayOfMonth) -> {
+        endVacaDateListener = (view, year, monthOfYear, dayOfMonth) -> {
             myCalendarEnd.set(Calendar.YEAR, year);
             myCalendarEnd.set(Calendar.MONTH, monthOfYear);
             myCalendarEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabelEnd();
+            showEndTimePickerDialog();
         };
 
         editStartVacaDate.setOnClickListener(v -> {
             String info = editStartVacaDate.getText().toString();
-            if (info.isEmpty()) info = "02/10/24";
+            if (info.isEmpty()) info = "02/10/24 12:00";
             try {
                 Date date = sdf.parse(info);
                 if (date != null) {
@@ -101,14 +106,14 @@ public class VacationDetails extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            new DatePickerDialog(VacationDetails.this, startVacaDate, myCalendarStart
+            new DatePickerDialog(VacationDetails.this, startVacaDateListener, myCalendarStart
                     .get(Calendar.YEAR), myCalendarStart.get(Calendar.MONTH),
                     myCalendarStart.get(Calendar.DAY_OF_MONTH)).show();
         });
 
         editEndVacaDate.setOnClickListener(v -> {
             String info = editEndVacaDate.getText().toString();
-            if (info.isEmpty()) info = "02/10/24";
+            if (info.isEmpty()) info = "02/10/24 12:00";
             try {
                 Date date = sdf.parse(info);
                 if (date != null) {
@@ -117,7 +122,7 @@ public class VacationDetails extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            DatePickerDialog datePickerDialog = new DatePickerDialog(VacationDetails.this, endVacaDate, myCalendarEnd
+            DatePickerDialog datePickerDialog = new DatePickerDialog(VacationDetails.this, endVacaDateListener, myCalendarEnd
                     .get(Calendar.YEAR), myCalendarEnd.get(Calendar.MONTH),
                     myCalendarEnd.get(Calendar.DAY_OF_MONTH));
 
@@ -127,10 +132,12 @@ public class VacationDetails extends AppCompatActivity {
         });
 
         MaterialButton addExcursionButton = findViewById(R.id.addExcursionButton);
+        MaterialButton deleteVacationButton = findViewById(R.id.deleteVacationButton);
         MaterialButton addVacationButton = findViewById(R.id.addVacationButton);
 
         if (vacationID == -1) {
             addExcursionButton.setVisibility(View.GONE);
+            deleteVacationButton.setVisibility(View.GONE);
             addVacationButton.setText("Save Vacation");
         } else {
             addVacationButton.setText("Save Changes");
@@ -144,7 +151,28 @@ public class VacationDetails extends AppCompatActivity {
             startActivity(intent);
         });
 
+        deleteVacationButton.setOnClickListener(v -> deleteVacation());
         addVacationButton.setOnClickListener(v -> saveVacation());
+    }
+
+    private void showStartTimePickerDialog() {
+        int hour = myCalendarStart.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendarStart.get(Calendar.MINUTE);
+        new TimePickerDialog(VacationDetails.this, (view, hourOfDay, minuteOfHour) -> {
+            myCalendarStart.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            myCalendarStart.set(Calendar.MINUTE, minuteOfHour);
+            updateLabelStart();
+        }, hour, minute, false).show();
+    }
+
+    private void showEndTimePickerDialog() {
+        int hour = myCalendarEnd.get(Calendar.HOUR_OF_DAY);
+        int minute = myCalendarEnd.get(Calendar.MINUTE);
+        new TimePickerDialog(VacationDetails.this, (view, hourOfDay, minuteOfHour) -> {
+            myCalendarEnd.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            myCalendarEnd.set(Calendar.MINUTE, minuteOfHour);
+            updateLabelEnd();
+        }, hour, minute, false).show();
     }
 
     @Override
@@ -166,33 +194,57 @@ public class VacationDetails extends AppCompatActivity {
     private void saveVacation() {
         String vacationName = editName.getText().toString();
         String hotelName = editHotel.getText().toString();
+        String priceString = editPrice.getText().toString();
         String startDate = editStartVacaDate.getText().toString();
         String endDate = editEndVacaDate.getText().toString();
 
-        if (vacationName.isEmpty() || hotelName.isEmpty() || startDate.isEmpty() || endDate.isEmpty()) {
+        if (vacationName.isEmpty() || hotelName.isEmpty() || priceString.isEmpty() || startDate.isEmpty() || endDate.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        double vacationPrice = Double.parseDouble(priceString);
+
         if (vacationID == -1) {
-            Vacation newVacation = new Vacation(0, vacationName, 0.0, hotelName, startDate, endDate);
+            Vacation newVacation = new Vacation(0, vacationName, vacationPrice, hotelName, startDate, endDate);
             repository.insert(newVacation);
         } else {
-            Vacation updatedVacation = new Vacation(vacationID, vacationName, 0.0, hotelName, startDate, endDate);
+            Vacation updatedVacation = new Vacation(vacationID, vacationName, vacationPrice, hotelName, startDate, endDate);
             repository.update(updatedVacation);
         }
 
         finish();
     }
 
+    private void deleteVacation() {
+        for (Vacation vaca : repository.getAllVacations()) {
+            if (vaca.getVacationID() == vacationID) currentVacation = vaca;
+        }
+
+        List<Excursion> excursionsToDelete = new ArrayList<>();
+        for (Excursion excursion : repository.getAllExcursions()) {
+            if (excursion.getVacationID() == vacationID) {
+                excursionsToDelete.add(excursion);
+            }
+        }
+
+        for (Excursion excursion : excursionsToDelete) {
+            repository.delete(excursion);
+        }
+
+        repository.delete(currentVacation);
+        Toast.makeText(VacationDetails.this, currentVacation.getVacationName() + " and its excursions were deleted", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
     private void updateLabelStart() {
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "MM/dd/yy HH:mm";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         editStartVacaDate.setText(sdf.format(myCalendarStart.getTime()));
     }
 
     private void updateLabelEnd() {
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "MM/dd/yy HH:mm";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         editEndVacaDate.setText(sdf.format(myCalendarEnd.getTime()));
     }
@@ -203,7 +255,7 @@ public class VacationDetails extends AppCompatActivity {
     }
 
     private void scheduleAlarm(AlarmManager alarmManager, long triggerTime, String message, int notificationId) {
-        Intent intent = new Intent(VacationDetails.this, MyReceiver.class);
+        Intent intent = new Intent(VacationDetails.this, MyVacationReceiver.class);
         intent.putExtra("key", message);
         intent.putExtra("notification_id", notificationId);
         PendingIntent sender = PendingIntent.getBroadcast(VacationDetails.this, notificationId, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -220,22 +272,7 @@ public class VacationDetails extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == R.id.vacationdelete) {
-            for (Vacation vaca : repository.getAllVacations()) {
-                if (vaca.getVacationID() == vacationID) currentVacation = vaca;
-            }
-
-            numExcursions = 0;
-            for (Excursion excursion : repository.getAllExcursions()) {
-                if (excursion.getVacationID() == vacationID) ++numExcursions;
-            }
-
-            if (numExcursions == 0) {
-                repository.delete(currentVacation);
-                Toast.makeText(VacationDetails.this, currentVacation.getVacationName() + " was deleted", Toast.LENGTH_LONG).show();
-                finish();
-            } else {
-                Toast.makeText(VacationDetails.this, "Can\'t delete a Vacation with excursions", Toast.LENGTH_LONG).show();
-            }
+            deleteVacation();
             return true;
         }
         if (item.getItemId() == R.id.addSampleExcursions) {
@@ -246,7 +283,7 @@ public class VacationDetails extends AppCompatActivity {
                 if (repository.getAllExcursions().isEmpty()) excursionID = 1;
                 else
                     excursionID = repository.getAllExcursions().get(repository.getAllExcursions().size() - 1).getExcursionID() + 1;
-                Excursion excursion = new Excursion(excursionID, "Snorkeling", 0.0, vacationID, "02/26/24");
+                Excursion excursion = new Excursion(excursionID, "Snorkeling", 0.0, vacationID, "02/26/24 12:00");
                 repository.insert(excursion);
                 onResume(); // Refresh the list
             }
@@ -265,7 +302,7 @@ public class VacationDetails extends AppCompatActivity {
         if (item.getItemId() == R.id.vacationnotify) {
             String startdate = editStartVacaDate.getText().toString();
             String enddate = editEndVacaDate.getText().toString();
-            String myFormat = "MM/dd/yy";
+            String myFormat = "MM/dd/yy HH:mm";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             Date myStartDate = null;
             Date myEndDate = null;
@@ -278,10 +315,12 @@ public class VacationDetails extends AppCompatActivity {
             try {
                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 if (myStartDate != null) {
-                    scheduleAlarm(alarmManager, myStartDate.getTime(), "Vacation Start: " + name, ++notificationID);
+                    long trigger = myStartDate.getTime() - 30 * 60 * 1000;
+                    scheduleAlarm(alarmManager, trigger, "Vacation Start: " + name + " in 30 minutes!", ++notificationID);
                 }
                 if (myEndDate != null) {
-                    scheduleAlarm(alarmManager, myEndDate.getTime(), "Vacation End: " + name, ++notificationID);
+                    long trigger = myEndDate.getTime() - 30 * 60 * 1000;
+                    scheduleAlarm(alarmManager, trigger, "Vacation End: " + name + " in 30 minutes!", ++notificationID);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
