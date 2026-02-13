@@ -132,11 +132,13 @@ public class VacationDetails extends AppCompatActivity {
         });
 
         MaterialButton addExcursionButton = findViewById(R.id.addExcursionButton);
+        MaterialButton shareVacationButton = findViewById(R.id.shareVacationButton);
         MaterialButton deleteVacationButton = findViewById(R.id.deleteVacationButton);
         MaterialButton addVacationButton = findViewById(R.id.addVacationButton);
 
         if (vacationID == -1) {
             addExcursionButton.setVisibility(View.GONE);
+            shareVacationButton.setVisibility(View.GONE);
             deleteVacationButton.setVisibility(View.GONE);
             addVacationButton.setText("Save Vacation");
         } else {
@@ -151,8 +153,49 @@ public class VacationDetails extends AppCompatActivity {
             startActivity(intent);
         });
 
+        shareVacationButton.setOnClickListener(v -> shareVacation());
         deleteVacationButton.setOnClickListener(v -> deleteVacation());
         addVacationButton.setOnClickListener(v -> saveVacation());
+    }
+
+    private void shareVacation() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+
+        String vacationName = editName.getText().toString();
+        String hotelName = editHotel.getText().toString();
+        String priceString = editPrice.getText().toString();
+        String startDate = editStartVacaDate.getText().toString();
+        String endDate = editEndVacaDate.getText().toString();
+
+        StringBuilder shareTextBuilder = new StringBuilder();
+        shareTextBuilder.append("Check out my upcoming vacation!\n\n");
+        shareTextBuilder.append("Vacation: ").append(vacationName).append("\n");
+        shareTextBuilder.append("Hotel: ").append(hotelName).append("\n");
+        shareTextBuilder.append("Price: $").append(priceString).append("\n");
+        shareTextBuilder.append("Dates: ").append(startDate).append(" - ").append(endDate).append("\n");
+
+        List<Excursion> filteredExcursions = new ArrayList<>();
+        if (vacationID != -1) {
+            for (Excursion p : repository.getAllExcursions()) {
+                if (p.getVacationID() == vacationID) filteredExcursions.add(p);
+            }
+        }
+
+        if (!filteredExcursions.isEmpty()) {
+            shareTextBuilder.append("\nExcursions:\n");
+            for (Excursion e : filteredExcursions) {
+                shareTextBuilder.append("- ").append(e.getExcursionName())
+                        .append(" on ").append(e.getExcursionDate())
+                        .append("\n");
+            }
+        }
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT, shareTextBuilder.toString());
+        sendIntent.putExtra(Intent.EXTRA_TITLE, "My Vacation: " + vacationName);
+        sendIntent.setType("text/plain");
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 
     private void showStartTimePickerDialog() {
@@ -251,6 +294,7 @@ public class VacationDetails extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_vacationdetails, menu);
+        menu.findItem(R.id.vacationshare).setVisible(false);
         return true;
     }
 
@@ -287,16 +331,6 @@ public class VacationDetails extends AppCompatActivity {
                 repository.insert(excursion);
                 onResume(); // Refresh the list
             }
-            return true;
-        }
-        if (item.getItemId() == R.id.vacationshare) {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Vacation Details: " + name);
-            sendIntent.putExtra(Intent.EXTRA_TITLE, "My Vacation");
-            sendIntent.setType("text/plain");
-            Intent shareIntent = Intent.createChooser(sendIntent, null);
-            startActivity(shareIntent);
             return true;
         }
         if (item.getItemId() == R.id.vacationnotify) {
