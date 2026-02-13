@@ -8,8 +8,10 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,13 +98,40 @@ public class ExcursionDetails extends AppCompatActivity {
         });
 
         MaterialButton saveButton = findViewById(R.id.saveExcursionButton);
-        saveButton.setOnClickListener(v -> saveExcursion());
-
+        MaterialButton setAlertButton = findViewById(R.id.setAlertButton);
         MaterialButton deleteButton = findViewById(R.id.deleteExcursionButton);
+
+        saveButton.setOnClickListener(v -> saveExcursion());
+        setAlertButton.setOnClickListener(v -> setAlert());
         deleteButton.setOnClickListener(v -> deleteExcursion());
 
         if (excursionID == -1) {
             deleteButton.setVisibility(View.GONE);
+            setAlertButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void setAlert() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Toast.makeText(this, "Please grant 'Alarms & reminders' permission in settings.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                return;
+            }
+        }
+
+        Date myDate = parseDate(editDate.getText().toString());
+        if (myDate != null) {
+            try {
+                long trigger = myDate.getTime() - 30 * 60 * 1000;
+                scheduleAlarm(alarmManager, trigger, "Excursion Starting: " + editName.getText().toString() + " in 30 minutes!", ++MainActivity.numAlert);
+                Toast.makeText(this, "Notification set for 30 minutes before " + editDate.getText().toString(), Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -174,9 +203,17 @@ public class ExcursionDetails extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_excursiondetails, menu);
-        // Hide the old delete menu item
         menu.findItem(R.id.excursiondelete).setVisible(false);
+        menu.findItem(R.id.notify).setVisible(false);
         return true;
+    }
+
+    private void scheduleAlarm(AlarmManager alarmManager, long triggerTime, String message, int notificationId) {
+        Intent intent = new Intent(ExcursionDetails.this, MyReceiver.class);
+        intent.putExtra("key", message);
+        intent.putExtra("notification_id", notificationId);
+        PendingIntent sender = PendingIntent.getBroadcast(ExcursionDetails.this, notificationId, intent, PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, sender);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -197,23 +234,6 @@ public class ExcursionDetails extends AppCompatActivity {
             sendIntent.putExtra(Intent.EXTRA_TITLE, "Excursion Details");
             sendIntent.setType("text/plain");
             startActivity(Intent.createChooser(sendIntent, null));
-            return true;
-        }
-        if (item.getItemId() == R.id.notify) {
-            Date myDate = parseDate(editDate.getText().toString());
-            if (myDate != null) {
-                try {
-                    long trigger = myDate.getTime() - 30 * 60 * 1000;
-                    Intent intent = new Intent(ExcursionDetails.this, MyReceiver.class);
-                    intent.putExtra("key", "Excursion Starting: " + editName.getText().toString() + " in 30 minutes!");
-                    PendingIntent sender = PendingIntent.getBroadcast(ExcursionDetails.this, ++MainActivity.numAlert, intent, PendingIntent.FLAG_IMMUTABLE);
-                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, trigger, sender);
-                    Toast.makeText(this, "Notification set for 30 minutes before " + editDate.getText().toString(), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
             return true;
         }
 

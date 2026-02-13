@@ -79,6 +79,16 @@
             app:cornerRadius="20dp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/setAlertButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Set Alert"
+            android:textColor="#7CBAFF"
+            app:cornerRadius="20dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/deleteExcursionButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"

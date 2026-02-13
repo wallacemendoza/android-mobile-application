@@ -10,7 +10,10 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -132,12 +135,14 @@ public class VacationDetails extends AppCompatActivity {
         });
 
         MaterialButton addExcursionButton = findViewById(R.id.addExcursionButton);
+        MaterialButton setAlertButton = findViewById(R.id.setAlertButton);
         MaterialButton shareVacationButton = findViewById(R.id.shareVacationButton);
         MaterialButton deleteVacationButton = findViewById(R.id.deleteVacationButton);
         MaterialButton addVacationButton = findViewById(R.id.addVacationButton);
 
         if (vacationID == -1) {
             addExcursionButton.setVisibility(View.GONE);
+            setAlertButton.setVisibility(View.GONE);
             shareVacationButton.setVisibility(View.GONE);
             deleteVacationButton.setVisibility(View.GONE);
             addVacationButton.setText("Save Vacation");
@@ -153,9 +158,50 @@ public class VacationDetails extends AppCompatActivity {
             startActivity(intent);
         });
 
+        setAlertButton.setOnClickListener(v -> setAlert());
         shareVacationButton.setOnClickListener(v -> shareVacation());
         deleteVacationButton.setOnClickListener(v -> deleteVacation());
         addVacationButton.setOnClickListener(v -> saveVacation());
+    }
+
+    private void setAlert() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Toast.makeText(this, "Please grant 'Alarms & reminders' permission in settings.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                return;
+            }
+        }
+
+        String startdate = editStartVacaDate.getText().toString();
+        String enddate = editEndVacaDate.getText().toString();
+        String myFormat = "MM/dd/yy HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        Date myStartDate = null;
+        Date myEndDate = null;
+        try {
+            myStartDate = sdf.parse(startdate);
+            myEndDate = sdf.parse(enddate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (myStartDate != null) {
+                long trigger = myStartDate.getTime() - 30 * 60 * 1000;
+                scheduleAlarm(alarmManager, trigger, "Vacation Start: " + name + " in 30 minutes!", ++notificationID);
+                Toast.makeText(this, "Notification set for 30 minutes before vacation start", Toast.LENGTH_SHORT).show();
+            }
+            if (myEndDate != null) {
+                long trigger = myEndDate.getTime() - 30 * 60 * 1000;
+                scheduleAlarm(alarmManager, trigger, "Vacation End: " + name + " in 30 minutes!", ++notificationID);
+                Toast.makeText(this, "Notification set for 30 minutes before vacation end", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void shareVacation() {
@@ -295,6 +341,7 @@ public class VacationDetails extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_vacationdetails, menu);
         menu.findItem(R.id.vacationshare).setVisible(false);
+        menu.findItem(R.id.vacationnotify).setVisible(false);
         return true;
     }
 
@@ -303,7 +350,7 @@ public class VacationDetails extends AppCompatActivity {
         intent.putExtra("key", message);
         intent.putExtra("notification_id", notificationId);
         PendingIntent sender = PendingIntent.getBroadcast(VacationDetails.this, notificationId, intent, PendingIntent.FLAG_IMMUTABLE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, sender);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, sender);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -333,35 +380,6 @@ public class VacationDetails extends AppCompatActivity {
             }
             return true;
         }
-        if (item.getItemId() == R.id.vacationnotify) {
-            String startdate = editStartVacaDate.getText().toString();
-            String enddate = editEndVacaDate.getText().toString();
-            String myFormat = "MM/dd/yy HH:mm";
-            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-            Date myStartDate = null;
-            Date myEndDate = null;
-            try {
-                myStartDate = sdf.parse(startdate);
-                myEndDate = sdf.parse(enddate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            try {
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                if (myStartDate != null) {
-                    long trigger = myStartDate.getTime() - 30 * 60 * 1000;
-                    scheduleAlarm(alarmManager, trigger, "Vacation Start: " + name + " in 30 minutes!", ++notificationID);
-                }
-                if (myEndDate != null) {
-                    long trigger = myEndDate.getTime() - 30 * 60 * 1000;
-                    scheduleAlarm(alarmManager, trigger, "Vacation End: " + name + " in 30 minutes!", ++notificationID);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }
